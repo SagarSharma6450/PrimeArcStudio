@@ -177,7 +177,7 @@ export default function Home() {
             {services.map((s) => (
               <button key={s.id} className={'call' + (selected?.id === s.id ? ' on' : '')} onClick={() => choose(s)}>
                 <span className="badge">{rupees(s.price)}</span>
-                <span className="call-icon"><Icon name={iconFor(s.name)} /></span>
+                <span className="call-icon"><Icon name="phone" /></span>
                 <span className="call-text"><strong>{s.name}</strong><small>{s.description}</small></span>
                 <span className="chev" aria-hidden="true">›</span>
               </button>
