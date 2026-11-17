@@ -43,7 +43,19 @@ export const GALLERY = [
 
 // Add only REAL customer reviews here. The reviews section stays hidden while this list is empty.
 // Example: { name: 'Customer name', rating: 5, text: 'What they said.' }
-export const REVIEWS = [];
+export const REVIEWS = [
+  { name: 'Deepak Kumar', detail: 'Interior consultation', rating: 5, text: 'Had a wonderful consultation experience. The team understood our requirements and suggested practical ideas that perfectly matched our vision and budget.' },
+  { name: 'Shruti Sharma', detail: 'Interior consultation', rating: 4, text: 'Really impressed with the creativity and attention to detail. The design ideas were modern, elegant, and thoughtfully planned.' },
+  { name: 'Om Thakur', detail: 'Architect consultation', rating: 4, text: 'The budget planning was extremely helpful. We received great suggestions to achieve the look we wanted without unnecessary expenses.' },
+  { name: 'Sunny Patel', detail: 'Interior consultation', rating: 5, text: 'Very professional and approachable throughout the consultation. Every question was answered clearly, making the entire planning process much easier.' },
+  { name: 'Payal Singh', detail: 'Architect consultation', rating: 4, text: 'Loved the design concepts and space utilization suggestions. They understood exactly what we wanted and turned our ideas into a beautiful plan.' },
+  { name: 'Harman Toor', detail: 'Interior consultation', rating: 5, text: 'From the initial discussion to the design recommendations, everything was well organized. Highly appreciate the guidance and attention given to our requirements.' },
+  { name: 'Ramesh Kaushik', detail: 'Architect consultation', rating: 4, text: 'Their space planning ideas were excellent. They made the best use of available space while maintaining a clean and elegant design.' },
+  { name: 'Preeti Vats', detail: 'Architect consultation', rating: 5, text: 'The consultation was informative and genuinely useful. We received practical advice on materials, layouts, and budgeting.' },
+  { name: 'Naresh Singh', detail: 'Interior consultation', rating: 5, text: 'Impressed by their understanding of design, functionality, and aesthetics. Every suggestion felt carefully considered and suited to our needs.' },
+  { name: 'Ishan Saini', detail: 'Interior consultation', rating: 4, text: 'A great experience overall! Their professional approach, creative thinking, and transparent guidance made planning our dream space easier.' },
+];
+
 export const HERO_SLIDES = [
   '/images/spacejoy-9M66C_w_ToM-unsplash.jpg',
   '/images/murad-kerimli-N03PjHWOEFA-unsplash.jpg',

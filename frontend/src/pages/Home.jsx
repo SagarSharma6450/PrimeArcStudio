@@ -68,31 +68,22 @@ function Reviews() {
   if (REVIEWS.length === 0) return null;
   const total = REVIEWS.length;
   const avg = (REVIEWS.reduce((s, r) => s + r.rating, 0) / total).toFixed(1);
+  const slide = total >= 4;                                  // slide only when there are enough reviews
+  const loop = slide ? [...REVIEWS, ...REVIEWS] : REVIEWS;   // doubled so the loop has no gap
   return (
     <Reveal className="block">
-      <h2>Reviews</h2>
-      <div className="rating">
-        <div className="avg"><strong>{avg}</strong><span className="stars">★★★★★</span><span className="muted small">{total} reviews</span></div>
-        <div className="bars">
-          {[5, 4, 3, 2, 1].map((n) => {
-            const c = REVIEWS.filter((r) => r.rating === n).length;
-            return (
-              <div className="bar" key={n}>
-                <span className="stars small">{'★'.repeat(n)}</span>
-                <i><b style={{ width: (c / total) * 100 + '%' }} /></i>
-                <span className="small">{c}</span>
-              </div>
-            );
-          })}
+      <h2>What our clients say</h2>
+      <p className="muted rating-line"><span className="stars">★★★★★</span> {avg} average from {total} {total === 1 ? 'review' : 'reviews'}</p>
+      <div className={'marquee' + (slide ? '' : ' still')} style={{ '--speed': Math.max(30, total * 7) + 's' }}>
+        <div className="track">
+          {loop.map((r, i) => (
+            <figure className="rcard" key={i} aria-hidden={i >= total}>
+              <span className="stars">{'★'.repeat(r.rating)}</span>
+              <blockquote>{r.text}</blockquote>
+              <figcaption><strong>{r.name}</strong>{r.detail && <span>{r.detail}</span>}</figcaption>
+            </figure>
+          ))}
         </div>
-      </div>
-      <div className="slider">
-        {REVIEWS.map((r, i) => (
-          <figure className="rcard" key={i}>
-            <blockquote>{r.text}</blockquote>
-            <figcaption>{r.name}</figcaption>
-          </figure>
-        ))}
       </div>
     </Reveal>
   );
