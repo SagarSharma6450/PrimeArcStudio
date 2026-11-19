@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { api, rupees } from '../api';
 import {
   BRAND, ARCHITECT_NAME, ROLE, ABOUT, CONTACT_EMAIL, PHONE, WEBSITE, INSTAGRAM, ADDRESS,
-  PROFILE_PHOTO, IMAGES, HERO_SLIDES, SPECIALITIES, GALLERY, REVIEWS, REFUND_POLICY, TERMS, PRIVACY
+  PROFILE_PHOTO, IMAGES, HERO_SLIDES, SPECIALITIES, GALLERY, REFUND_POLICY, TERMS, PRIVACY
 } from '../config';
 import Booking from './Booking.jsx';
 import Art from '../Art.jsx';
@@ -64,26 +64,71 @@ function Icon({ name }) {
 }
 const iconFor = (n) => (/meet|video|online/i.test(n) ? 'video' : /floor|plan|3d/i.test(n) ? 'plan' : 'phone');
 
-function Reviews() {
-  if (REVIEWS.length === 0) return null;
-  const total = REVIEWS.length;
-  const avg = (REVIEWS.reduce((s, r) => s + r.rating, 0) / total).toFixed(1);
-  const slide = total >= 4;                                  // slide only when there are enough reviews
-  const loop = slide ? [...REVIEWS, ...REVIEWS] : REVIEWS;   // doubled so the loop has no gap
+function Reviews({ list }) {
+  if (list.length === 0) return null;
+  const total = list.length;
+  const slide = total >= 4;                              // slides once there are 4 or more
+  const loop = slide ? [...list, ...list] : list;        // doubled so the loop has no gap
   return (
     <Reveal className="block">
       <h2>What our clients say</h2>
-      <p className="muted rating-line"><span className="stars">★★★★★</span> {avg} average from {total} {total === 1 ? 'review' : 'reviews'}</p>
       <div className={'marquee' + (slide ? '' : ' still')} style={{ '--speed': Math.max(30, total * 7) + 's' }}>
         <div className="track">
           {loop.map((r, i) => (
             <figure className="rcard" key={i} aria-hidden={i >= total}>
-              <span className="stars">{'★'.repeat(r.rating)}</span>
-              <blockquote>{r.text}</blockquote>
-              <figcaption><strong>{r.name}</strong>{r.detail && <span>{r.detail}</span>}</figcaption>
+              <blockquote>{r.message}</blockquote>
+              <figcaption><strong>{r.name}</strong></figcaption>
             </figure>
           ))}
         </div>
+      </div>
+    </Reveal>
+  );
+}
+
+function ReviewForm() {
+  const [f, setF] = useState({ name: '', message: '', website: '' });
+  const [state, setState] = useState('idle');
+  const [error, setError] = useState('');
+
+  async function submit(e) {
+    e.preventDefault();
+    setError('');
+    setState('sending');
+    try {
+      await api('/reviews', { method: 'POST', body: f });
+      setF({ name: '', message: '', website: '' });
+      setState('done');
+    } catch (err) {
+      setError(err.message);
+      setState('idle');
+    }
+  }
+
+  return (
+    <Reveal className="block" id="feedback">
+      <div className="panel feedback">
+        <h2>Share your feedback</h2>
+        <p className="muted">Worked with us? Tell us how it went. Your review appears on the website after we approve it.</p>
+        {state === 'done' ? (
+          <p className="ok">Thank you! We received your review and it will appear once approved.</p>
+        ) : (
+          <form onSubmit={submit}>
+            <div className="fields">
+              <label>Your name
+                <input required maxLength={60} value={f.name} onChange={(e) => setF({ ...f, name: e.target.value })} />
+              </label>
+              <label className="wide">Your review
+                <textarea required minLength={10} maxLength={500} rows={4} value={f.message}
+                  onChange={(e) => setF({ ...f, message: e.target.value })} />
+              </label>
+              <input className="hp" tabIndex={-1} autoComplete="off" aria-hidden="true"
+                value={f.website} onChange={(e) => setF({ ...f, website: e.target.value })} />
+            </div>
+            <button className="btn" disabled={state === 'sending'}>{state === 'sending' ? 'Sending…' : 'Submit review'}</button>
+            {error && <p className="error">{error}</p>}
+          </form>
+        )}
       </div>
     </Reveal>
   );
@@ -109,11 +154,13 @@ function Policies() {
 export default function Home() {
   const [services, setServices] = useState([]);
   const [selected, setSelected] = useState(null);
+  const [reviews, setReviews] = useState([]);
   const [spec, setSpec] = useState(null);
   const [error, setError] = useState('');
   const bookRef = useRef(null);
 
   useEffect(() => { api('/services').then(setServices).catch((e) => setError(e.message)); }, []);
+  useEffect(() => { api('/reviews').then(setReviews).catch(() => {}); }, []);
   useEffect(() => {
     const esc = (e) => e.key === 'Escape' && setSpec(null);
     window.addEventListener('keydown', esc);
@@ -190,7 +237,8 @@ export default function Home() {
           </div>
         </Reveal>
 
-        <Reviews />
+        <Reviews list={reviews} />
+        <ReviewForm />
         <Policies />
         <footer className="foot">
   <h2>Contact us</h2>

@@ -38,7 +38,7 @@ function Login({ onLogin }) {
 
 function Dashboard({ onLogout }) {
   const [tab, setTab] = useState('appointments');
-  const tabs = [['appointments', 'Appointments'], ['services', 'Services & prices'], ['availability', 'Availability']];
+  const tabs = [['appointments', 'Appointments'], ['reviews', 'Reviews'], ['services', 'Services & prices'], ['availability', 'Availability']];
   return (
     <div className="wrap admin">
       <div className="row between">
@@ -53,6 +53,7 @@ function Dashboard({ onLogout }) {
       {tab === 'appointments' && <Appointments />}
       {tab === 'services' && <Services />}
       {tab === 'availability' && <Availability />}
+      {tab === 'reviews' && <ReviewsAdmin />}
     </div>
   );
 }
@@ -223,6 +224,47 @@ function Availability() {
         ))}
       </div>
       {error && <p className="error">{error}</p>}
+    </>
+  );
+}
+/* ---------------- Reviews ---------------- */
+function ReviewsAdmin() {
+  const [list, setList] = useState([]);
+  const [error, setError] = useState('');
+  const load = () => api('/admin/reviews', { admin: true }).then(setList).catch((e) => setError(e.message));
+  useEffect(() => { load(); }, []);
+
+  async function toggle(r) {
+    await api(`/admin/reviews/${r.id}/visibility?show=${!r.approved}`, { method: 'PUT', admin: true });
+    load();
+  }
+  async function remove(r) {
+    if (!confirm('Delete this review permanently?')) return;
+    await api(`/admin/reviews/${r.id}`, { method: 'DELETE', admin: true });
+    load();
+  }
+
+  return (
+    <>
+      <p className="muted">New reviews stay hidden until you click "Show on website".</p>
+      {error && <p className="error">{error}</p>}
+      {list.length === 0 && <p className="muted">No reviews yet.</p>}
+      {list.map((r) => (
+        <div className="panel review-row" key={r.id}>
+          <div className="row between">
+            <strong>{r.name}</strong>
+            <span className={'pill' + (r.approved ? ' on' : '')}>{r.approved ? 'Showing on website' : 'Hidden'}</span>
+          </div>
+          <p>{r.message}</p>
+          <div className="row between">
+            <span className="muted small">{new Date(r.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+            <div className="row gap">
+              <button className="btn small" onClick={() => toggle(r)}>{r.approved ? 'Hide' : 'Show on website'}</button>
+              <button className="btn small ghost" onClick={() => remove(r)}>Delete</button>
+            </div>
+          </div>
+        </div>
+      ))}
     </>
   );
 }

@@ -26,6 +26,7 @@ public class AdminController {
     private final ServiceRepository services;
     private final AppointmentRepository appointments;
     private final AvailabilityRepository availability;
+    private final ReviewRepository reviews;
     private final BlockedDateRepository blocked;
     private final JwtService jwt;
     private final PasswordEncoder encoder;
@@ -127,4 +128,18 @@ public class AdminController {
 
     @DeleteMapping("/blocked-dates/{id}")
     public void unblock(@PathVariable Long id) { blocked.deleteById(id); }
+
+        // ---------- reviews ----------
+    @GetMapping("/reviews")
+    public List<Review> allReviews() { return reviews.findAllByOrderByCreatedAtDesc(); }
+
+    @PutMapping("/reviews/{id}/visibility")
+    @Transactional
+    public void reviewVisibility(@PathVariable Long id, @RequestParam boolean show) {
+        Review r = reviews.findById(id).orElseThrow(() -> new ApiException(404, "Not found"));
+        r.setApproved(show);
+    }
+
+    @DeleteMapping("/reviews/{id}")
+    public void deleteReview(@PathVariable Long id) { reviews.deleteById(id); }
 }

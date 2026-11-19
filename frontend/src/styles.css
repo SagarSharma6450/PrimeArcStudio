@@ -191,3 +191,10 @@ th { font-weight: 600; background: var(--stone); }
 .marquee.still .track { animation: none; flex-wrap: wrap; width: auto; }
 @keyframes scroll { to { transform: translateX(calc(-50% - .5rem)); } }
 @media (prefers-reduced-motion: reduce) { .marquee { overflow-x: auto; } }
+/* feedback form + admin reviews */
+textarea { font: inherit; padding: .7rem .8rem; border: 1px solid var(--line); border-radius: 10px; background: #fff; color: var(--ink); resize: vertical; width: 100%; }
+.panel.feedback { background: var(--stone); border-color: transparent; padding: 1.8rem; }
+.hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+.pill { font-size: .8rem; padding: .15rem .75rem; border-radius: 999px; background: var(--stone); color: var(--muted); }
+.pill.on { background: var(--green); color: #fff; }
+.review-row p { margin: .6rem 0 1rem; white-space: pre-wrap; }
