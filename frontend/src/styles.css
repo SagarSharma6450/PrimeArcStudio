@@ -179,18 +179,89 @@ th { font-weight: 600; background: var(--stone); }
 .policy-list li, .policy li { margin-bottom: .5rem; }
 .policy { border-top: 1px solid var(--line); padding: .8rem 0; }
 .policy summary { cursor: pointer; font-weight: 500; }
-/* sliding reviews */
-.rating-line { margin: .2rem 0 0; }
-.marquee { overflow: hidden; margin-top: 1rem; -webkit-mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent); mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent); }
-.track { display: flex; gap: 1rem; width: max-content; padding: .3rem 0 1rem; animation: scroll var(--speed, 60s) linear infinite; }
-.marquee:hover .track { animation-play-state: paused; }
-.track .rcard { width: 300px; background: #fff; display: flex; flex-direction: column; gap: .6rem; }
-.track .rcard blockquote { margin: 0; flex: 1; }
-.rcard figcaption span { display: block; color: var(--muted); font-size: .85rem; font-weight: 400; }
-.marquee.still { -webkit-mask-image: none; mask-image: none; }
-.marquee.still .track { animation: none; flex-wrap: wrap; width: auto; }
-@keyframes scroll { to { transform: translateX(calc(-50% - .5rem)); } }
-@media (prefers-reduced-motion: reduce) { .marquee { overflow-x: auto; } }
+/* Sliding Reviews */
+.rating-line {
+    margin: .2rem 0 0;
+}
+
+.marquee {
+    overflow: hidden;
+    width: 100%;
+    margin-top: 1rem;
+
+    -webkit-mask-image: linear-gradient(
+        to right, transparent, #000 6%, #000 94%, transparent
+    );
+
+    mask-image: linear-gradient(
+        to right, transparent, #000 6%, #000 94%, transparent
+    );
+}
+
+.track {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 1rem;
+    width: max-content;
+    padding: .3rem 0 1rem;
+
+    animation: scroll var(--speed, 60s) linear infinite;
+}
+
+.track .rcard {
+    flex: 0 0 300px;
+    width: 300px;
+    min-width: 300px;
+
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    gap: .6rem;
+}
+
+.track .rcard blockquote {
+    margin: 0;
+    flex: 1;
+}
+
+.rcard figcaption span {
+    display: block;
+    color: var(--muted);
+    font-size: .85rem;
+    font-weight: 400;
+}
+
+.marquee:hover .track {
+    animation-play-state: paused;
+}
+
+@keyframes scroll {
+    to {
+        transform: translateX(calc(-50% - .5rem));
+    }
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+    .track .rcard {
+        flex: 0 0 280px;
+        width: 280px;
+        min-width: 280px;
+    }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+    .marquee {
+        overflow-x: auto;
+        -webkit-mask-image: none;
+        mask-image: none;
+    }
+
+    .track {
+        animation: none;
+    }
+}
 /* feedback form + admin reviews */
 textarea { font: inherit; padding: .7rem .8rem; border: 1px solid var(--line); border-radius: 10px; background: #fff; color: var(--ink); resize: vertical; width: 100%; }
 .panel.feedback { background: var(--stone); border-color: transparent; padding: 1.8rem; }

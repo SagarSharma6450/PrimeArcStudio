@@ -66,18 +66,31 @@ const iconFor = (n) => (/meet|video|online/i.test(n) ? 'video' : /floor|plan|3d/
 
 function Reviews({ list }) {
   if (list.length === 0) return null;
+
   const total = list.length;
-  const slide = total >= 4;                              // slides once there are 4 or more
-  const loop = slide ? [...list, ...list] : list;        // doubled so the loop has no gap
+
+  // Always duplicate reviews for continuous sliding
+  const loop = [...list, ...list];
+
   return (
     <Reveal className="block">
       <h2>What our clients say</h2>
-      <div className={'marquee' + (slide ? '' : ' still')} style={{ '--speed': Math.max(30, total * 7) + 's' }}>
+
+      <div
+        className="marquee"
+        style={{ '--speed': Math.max(30, total * 7) + 's' }}
+      >
         <div className="track">
           {loop.map((r, i) => (
-            <figure className="rcard" key={i} aria-hidden={i >= total}>
+            <figure
+              className="rcard"
+              key={i}
+              aria-hidden={i >= total}
+            >
               <blockquote>{r.message}</blockquote>
-              <figcaption><strong>{r.name}</strong></figcaption>
+              <figcaption>
+                <strong>{r.name}</strong>
+              </figcaption>
             </figure>
           ))}
         </div>
