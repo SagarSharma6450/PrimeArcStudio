@@ -66,31 +66,26 @@ const iconFor = (n) => (/meet|video|online/i.test(n) ? 'video' : /floor|plan|3d/
 
 function Reviews({ list }) {
   if (list.length === 0) return null;
-
   const total = list.length;
-
-  // Always duplicate reviews for continuous sliding
-  const loop = [...list, ...list];
-
+  const rated = list.filter((r) => r.rating);
+  const avg = rated.length ? (rated.reduce((s, r) => s + r.rating, 0) / rated.length).toFixed(1) : null;
+  const slide = total >= 4;
+  const loop = slide ? [...list, ...list] : list;
   return (
     <Reveal className="block">
       <h2>What our clients say</h2>
-
-      <div
-        className="marquee"
-        style={{ '--speed': Math.max(30, total * 7) + 's' }}
-      >
+      {avg && (
+        <p className="rating-line">
+          <span className="stars">★</span> <strong>{avg}</strong> average from {rated.length} {rated.length === 1 ? 'review' : 'reviews'}
+        </p>
+      )}
+      <div className={'marquee' + (slide ? '' : ' still')} style={{ '--speed': Math.max(30, total * 7) + 's' }}>
         <div className="track">
           {loop.map((r, i) => (
-            <figure
-              className="rcard"
-              key={i}
-              aria-hidden={i >= total}
-            >
+            <figure className="rcard" key={i} aria-hidden={i >= total}>
+              {r.rating ? <span className="stars">{'★'.repeat(r.rating)}{'☆'.repeat(5 - r.rating)}</span> : null}
               <blockquote>{r.message}</blockquote>
-              <figcaption>
-                <strong>{r.name}</strong>
-              </figcaption>
+              <figcaption><strong>{r.name}</strong></figcaption>
             </figure>
           ))}
         </div>
@@ -99,18 +94,30 @@ function Reviews({ list }) {
   );
 }
 
+function StarPicker({ value, onChange }) {
+  return (
+    <div className="picker" role="radiogroup" aria-label="Your rating">
+      {[1, 2, 3, 4, 5].map((n) => (
+        <button type="button" key={n} className={n <= value ? 'on' : ''} onClick={() => onChange(n)}
+          aria-label={n + (n === 1 ? ' star' : ' stars')}>★</button>
+      ))}
+    </div>
+  );
+}
+
 function ReviewForm() {
-  const [f, setF] = useState({ name: '', message: '', website: '' });
+  const [f, setF] = useState({ name: '', message: '', rating: 0, website: '' });
   const [state, setState] = useState('idle');
   const [error, setError] = useState('');
 
   async function submit(e) {
     e.preventDefault();
     setError('');
+    if (!f.rating) { setError('Please choose a star rating.'); return; }
     setState('sending');
     try {
       await api('/reviews', { method: 'POST', body: f });
-      setF({ name: '', message: '', website: '' });
+      setF({ name: '', message: '', rating: 0, website: '' });
       setState('done');
     } catch (err) {
       setError(err.message);
@@ -122,17 +129,21 @@ function ReviewForm() {
     <Reveal className="block" id="feedback">
       <div className="panel feedback">
         <h2>Share your feedback</h2>
-        <p className="muted">Worked with us? Tell us how it went. Your feedback helps us improve our services.</p>
+        <p className="muted">Worked with us? Tell us how it went. Your review appears on the website after we approve it.</p>
         {state === 'done' ? (
-          <p className="ok">Thank you! We received your feedback.</p>
+          <p className="ok">Thank you! We received your review and it will appear once approved.</p>
         ) : (
           <form onSubmit={submit}>
             <div className="fields">
               <label>Your name
                 <input required maxLength={60} value={f.name} onChange={(e) => setF({ ...f, name: e.target.value })} />
               </label>
+              <div className="wide">
+                <span className="rate-label">Your rating</span>
+                <StarPicker value={f.rating} onChange={(n) => setF({ ...f, rating: n })} />
+              </div>
               <label className="wide">Your review
-                <textarea required minLength={10} maxLength={500} rows={4} value={f.message}
+                <textarea required minLength={10} maxLength={500} value={f.message}
                   onChange={(e) => setF({ ...f, message: e.target.value })} />
               </label>
               <input className="hp" tabIndex={-1} autoComplete="off" aria-hidden="true"

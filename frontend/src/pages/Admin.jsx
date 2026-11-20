@@ -252,7 +252,7 @@ function ReviewsAdmin() {
       {list.map((r) => (
         <div className="panel review-row" key={r.id}>
           <div className="row between">
-            <strong>{r.name}</strong>
+            <span><strong>{r.name}</strong> {r.rating ? <span className="stars">{'★'.repeat(r.rating)}{'☆'.repeat(5 - r.rating)}</span> : null}</span>
             <span className={'pill' + (r.approved ? ' on' : '')}>{r.approved ? 'Showing on website' : 'Hidden'}</span>
           </div>
           <p>{r.message}</p>

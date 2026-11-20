@@ -47,7 +47,7 @@ public class PublicController {
     @GetMapping("/reviews")
     public List<Dtos.PublicReview> publicReviews() {
         return reviews.findByApprovedTrueOrderByCreatedAtDesc().stream()
-                .map(r -> new Dtos.PublicReview(r.getName(), r.getMessage())).toList();
+                .map(r -> new Dtos.PublicReview(r.getName(), r.getMessage(), r.getRating())).toList();
     }
 
     /** Anyone can submit. It is saved as hidden until the admin approves it. */
@@ -57,6 +57,7 @@ public class PublicController {
         Review review = new Review();
         review.setName(r.name().trim());
         review.setMessage(r.message().trim());
+        review.setRating(r.rating());
         reviews.save(review);
     }
 }

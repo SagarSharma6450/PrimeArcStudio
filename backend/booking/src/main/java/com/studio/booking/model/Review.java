@@ -15,6 +15,7 @@ public class Review {
     private String name;
     @Column(length = 1000)
     private String message;
+    private Integer rating;   // 1 to 5 stars
     private boolean approved = false;
     private LocalDateTime createdAt = LocalDateTime.now();
 }

@@ -19,8 +19,9 @@ public class Dtos {
     public record ReviewRequest(
         @NotBlank(message = "Please enter your name") @Size(max = 60) String name,
         @NotBlank(message = "Please write your review") @Size(min = 10, max = 500, message = "Please write between 10 and 500 characters") String message,
+        @NotNull(message = "Please choose a star rating") @Min(1) @Max(5) Integer rating,
         String website) {}
-    public record PublicReview(String name, String message) {}
+    public record PublicReview(String name, String message, Integer rating) {}
     public record Slot(String time, boolean available) {}
     public record LoginRequest(String email, String password) {}
     public record AvailabilityDto(int dayOfWeek, boolean enabled, int startHour, int endHour) {}
