@@ -129,9 +129,9 @@ function ReviewForm() {
     <Reveal className="block" id="feedback">
       <div className="panel feedback">
         <h2>Share your feedback</h2>
-        <p className="muted">Worked with us? Tell us how it went. Your review appears on the website after we approve it.</p>
+        <p className="muted">Worked with us? Tell us how it went. Your feedback helps us improve our services.</p>
         {state === 'done' ? (
-          <p className="ok">Thank you! We received your review and it will appear once approved.</p>
+          <p className="ok">Thank you! We received your feedback.</p>
         ) : (
           <form onSubmit={submit}>
             <div className="fields">
